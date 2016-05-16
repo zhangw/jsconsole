@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset=utf-8 />
-<title>Remotely debugging mobile web apps</title>
+<title>Remotely debugging for set top box</title>
 <style>
   body {
     max-width: 720px;
@@ -46,15 +46,13 @@
 </style>
 </head>
 <body>
-<h1>Remotely debug a mobile web app</h1>
-<p><a href="/">jsconsole.com</a> is a simple JavaScript command line tool. However, it also provides the ability to bridge across to other browser windows to remotely control and debug that window - be it in another browser or another device altogether.</p>
-<p>In fact, mobile web app debugging is so damn tricky, that I gave up, and decided to build <em>this</em> very tool instead. See the <a href="#videos">videos examples</a> if you'd rather see this in action now.</p>
+<h1>Remotely debug on set top box</h1>
 
 <h2>Creating a session</h2>
 <p>To create a new session, in the jsconsole prompt, <a target="_blank" href="/?:listen">simply run</a>:</p>
 <pre><code>:listen</code></pre>
 <p>This will yield a unique key along the lines of <code>FAE031CD-74A0-46D3-AE36-757BAB262BEA</code>. Now using this unique key, include a <code>&lt;script&gt;</code> anywhere in the web app that you wish to debug:</p>
-<pre><code>&lt;script src=&quot;http://jsconsole.com/remote.js?FAE031CD-74A0-46D3-AE36-757BAB262BEA&quot;&gt;&lt;/script&gt;</code></pre>
+<pre><code id="cstext"></code></pre>
 
 <p>Now any calls to <code>console.log</code> from your web app will display the result in the jsconsole session that is listening to your key. Equally, if you run a command in the jsconsole session, the code will injected in to your web app and the result returned to jsconsole.</p>
 
@@ -69,28 +67,18 @@
 <pre><code>:listen FAE031CD-74A0-46D3-AE36-757BAB262BEA
 Creating connection...
 Connected to "FAE031CD-74A0-46D3-AE36-757BAB262BEA"
-Connection established with Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-GB; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8</code></pre>
+Connection established with {userAgent} or {pageInfo}</code></pre>
 
 <h2>A word of warning</h2>
-<p>Note that this technique is also injecting code <em>directly</em> in to your web app - this tool should only be used for debugging. I can't take respibility for how you use this tool, basically: take care!</p>
+<p>Note that this technique is also injecting code <em>directly</em> in to your web client - this tool should only be used for debugging. I can't take respibility for how you use this tool, basically: take care!</p>
 
 <h2>Current known support</h2>
-<p>Remote debugging has been developed to work on all platforms, even if the technology isn't supported. However, jsconsole remote debugging has specifically tested and working on the follow mobile devices (feel free to add to this list):</p>
-<ul>
-  <li>iOS 4.2.x - iPad, iPhone 4</li>
-  <li>Andriod 2.2.2 - Nexus One</li>
-  <li>webOS - Palm Pre</li>
-</ul>
-
-<h2 id="videos">Video exmaples</h2>
-
-<h3>Simple iOS simulator example</h3>
-<iframe title="YouTube video player" width="640" height="390" src="http://www.youtube.com/embed/Y219Ziuipvc?hd=1" frameborder="0" allowfullscreen></iframe>
-
-<h3>Full explanation and Android test</h3>
-<iframe title="YouTube video player" width="640" height="390" src="http://www.youtube.com/embed/DSH392Gxaho?hd=1" frameborder="0" allowfullscreen></iframe>
-
-
 
 </body>
+<script type="text/javascript">
+    window.onload = function(){
+        var cstext = document.getElementById('cstext');
+        cstext.innerHTML = '&lt;script id="zhiping-remote-debugger"' + " src=&quot;" + window.location.origin + "/remote.js?FAE031CD-74A0-46D3-AE36-757BAB262BEA&quot;&gt;&lt;/script&gt;";
+    };
+</script>
 </html>

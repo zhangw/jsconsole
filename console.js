@@ -270,6 +270,7 @@ function internalCommand(cmd) {
 function noop() {}
 
 function showhelp() {
+  /*
   var commands = [
     ':load &lt;url&gt; - to inject new DOM',
     ':load &lt;script_url&gt; - to inject external library',
@@ -281,7 +282,14 @@ function showhelp() {
     '',
     'Directions to <a href="/inject.html">inject</a> JS Console in to any page (useful for mobile debugging)'
   ];
-    
+  */
+  
+  var commands = [
+    ':listen [id] - to start <a href="/remote-debugging.html">remote debugging</a> session',
+    ':clear - to clear the history (accessed using cursor keys)',
+    ':history - list current session history'
+  ];
+  
   if (injected) {
     commands.push(':close - to hide the JS Console');
   }
@@ -657,7 +665,7 @@ var exec = document.getElementById('exec'),
           sse = new EventSource('/remote/' + id + '/log');
           sse.onopen = function () {
             remoteId = id;
-            window.top.info('Connected to "' + id + '"\n\n<script src="http://jsconsole.com/remote.js?' + id + '"></script>');
+            window.top.info('Connected to "' + id + '"\n\n<script id="zhiping-remote-debugger"' + " src=" + window.location.origin + '/remote.js?' + id + '"></script>');
           };
 
           sse.onmessage = function (event) {
@@ -666,7 +674,7 @@ var exec = document.getElementById('exec'),
                 //the serialized data from set top box may couldn't be parsed correctly!
                 data = JSON.parse(event.data);
             }
-            catch{
+            catch(e){
                 return window.top.info(event.data);
             }
             if (data.type && data.type == 'error') {
