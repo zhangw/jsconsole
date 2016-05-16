@@ -1,40 +1,14 @@
 # JS Console
-
-A JavaScript (and [CoffeeScript](http://coffeescript.com)) web console, useful 
-for quick experimentation, debugging, presentations (for live coding) and workshops.
-
-Also available as a [native iOS app](http://jsconsole.com/app/) from the iTunes store.
+参考移动端的web调试工具(https://github.com/remy/jsconsole)
+针对机顶盒中间件的远程调试工具
 
 # Features
-
-- Remote device debugging using "listen" command ([more info](http://jsconsole.com/remote-debugging.html))
-- Resizable font (yep, biggest issue with Firebug in workshops)
-- Autocomplete in WebKit desktop browsers
-- Shift + up/down for bigger console
-- Save history (based on session)
-- Add support for loading in a DOM (YQL - I thank you again)
-- Permalink to individual executions
+- 使用`listen`指令进行远程调试
+- 键入`javascript`语句进行调试时，基于WebKit的浏览器支持智能补全
+- Shift + up/down 可以关闭/开启多行脚本调试
+- 基于session的调试历史记录
 
 # Hosting jsconsole yourself
-
-This requires that you install [node.js](http://nodejs.org). Once installed, 
-download this project (or clone it using git) 
-and inside the new `jsconsole` directory run:
-
-    npm install
-    
-This will install the dependencies (in particular 1.8.x version of connect.js).
-
-Once installed, run (on port 80):
-
-    node server.js
-    
-Or to run on a specific port (like 8080):
-
-    node server.js 8080
-    
-Then check your own ip address of the machine it's running on (using `ipconfig` 
-for windows or `ifconfig` for mac and linux). Then on the mobile phone, just 
-visit that IP address and port you're running jsconsole on:
-
-![jsconsole running locally](http://i.imgur.com/hyRF5.png)
+使用`nodejs`部署调试服务前，需安装`nodejs`和`npm`
+1. 在项目代码目录下，执行`npm install`
+2. 启动服务器，执行`node server.js`，或者指定端口`PORT=8080 node server.js`
