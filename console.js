@@ -665,7 +665,7 @@ var exec = document.getElementById('exec'),
           sse = new EventSource('/remote/' + id + '/log');
           sse.onopen = function () {
             remoteId = id;
-            window.top.info('Connected to "' + id + '"\n\n<script id="zhiping-remote-debugger"' + " src=" + window.location.origin + '/remote.js?' + id + '"></script>');
+            window.top.info('Connected to "' + id + '"\n\n<script id="zhiping-remote-debugger"' + ' src="' + window.location.origin + '/remote.js?' + id + '"></script>');
           };
 
           sse.onmessage = function (event) {
