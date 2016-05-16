@@ -661,7 +661,14 @@ var exec = document.getElementById('exec'),
           };
 
           sse.onmessage = function (event) {
-            var data = JSON.parse(event.data);
+            var data;
+            try{
+                //the serialized data from set top box may couldn't be parsed correctly!
+                data = JSON.parse(event.data);
+            }
+            catch{
+                return window.top.info(event.data);
+            }
             if (data.type && data.type == 'error') {
               post(data.cmd, true, ['error', data.response]);
             } else if (data.type && data.type == 'info') {
