@@ -1,36 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset=utf-8 />
-<title>remote</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 </head>
-<body>
-<script src="/EventSource.js"></script>
+<body style="background:#a0e; -webkit-opacity:0.5">
+<script src="/EventSource.wasu.js"></script>
 <script>
-var id = window.location.search.replace(/.*\?/, ''),
-    origin = null;
-window.addEventListener('message', function (event) {
-  origin = event.origin;
+    var JSON = JSON || {};
+    // implement JSON.stringify serialization
+    JSON.stringify = JSON.stringify || function (obj) {
+        var t = typeof (obj);
+        if (t != "object" || obj === null) {
+            // simple data type
+            if (t == "string") obj = '"'+obj+'"';
+            return String(obj);
 
-  if (event.data == '__init__') {
-    return;
-  }
+        }
+        else {
+            // recurse array or object
+            var n, v, json = [], arr = (obj && obj.constructor == Array);
+            for (n in obj) {
+                v = obj[n]; t = typeof(v);
+                if (t == "string") v = '"'+v+'"';
+                else if (t == "object" && v !== null) v = JSON.stringify(v);
+                json.push((arr ? "" : '"' + n + '":') + String(v));
+            }
+            if(json.length){
+                return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
+                }else{
+                return (arr ? "[" : "{") + '"'+obj.toString()+'"' + (arr ? "]" : "}");
+            }
+        }
+    };
 
-  var xhr = new XMLHttpRequest(),
-      params = 'data=' + encodeURIComponent(event.data);
-  
-  xhr.open('POST', '/remote/' + id + '/log', true);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.send(params);    
+    // implement JSON.parse de-serialization
+    JSON.parse = JSON.parse || function (str) {
+        if (str === "") str = '""';
+        eval("var p=" + str + ";");
+        return p;
+    };
+    function postData(data){
+        var result_xhr = new XMLHttpRequest();
+        var params = 'data=' + encodeURIComponent(data);
+        result_xhr.open('POST', '/remote/' + id + '/log', true);
+        result_xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        result_xhr.send(params);
+    }
+    window.onload = function(){
+        document.onkeydown = function(event){
+            iPanel.mainFrame.focus();
+            //TODO::close overlayFrame if event.which === "BACKSPACE"
+            iPanel.overlayFrame.close();
+            return true;
+        }
+        var id = window.location.search.replace(/.*\?/, ''),
+        setTimeout(function () {
+            var sse = new EventSource('/remote/' + id + '/run');
+            sse.onmessage = function (event) {
+                //receive debugger command from remote debugger server
+                var cmd = event.data;
+                //TODO:execute cross domain javascript underneath iPanel.mainFrame object
+                var result = (new Function("return " + cmd))();
+                //serialization
+                result = JSON.stringify({"response": result, "cmd": cmd});
+                postData(result);
+            };
+        }, 1000);
 
-}, false);
-
-setTimeout(function () {
-  var sse = new EventSource('/remote/' + id + '/run');
-  sse.onmessage = function (event) {
-    window.top.postMessage(event.data, origin);
-  };
-}, 13);
+        setTimeout(function (){
+          //TODO:send more stb client info to remote debugging server
+          var stbinfo = JSON.stringify({"response": 'Connection established with stb ' + window.mainFrame.location, "type":'info'});
+          postData(stbinfo);
+        }, 100);
+    }
 </script>
 </body>
 </html>
